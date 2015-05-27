@@ -1,0 +1,139 @@
+/** @file
+Class for CMake and command line configuration. Also see README.md for more details.
+
+Copyleft Balázs Bámer, 2015.
+*/
+
+#ifndef STILL_CONFIG
+#define STILL_CONFIG
+
+#include <getopt.h>
+#include <cctype>
+
+// configured settings
+#define STILL_VERSION_MAJOR @STILL_VERSION_MAJOR@
+#define STILL_VERSION_MINOR @STILL_VERSION_MINOR@
+
+// these are compile-type settings
+#define USE_NVWA @USE_NVWA@
+#define DEBUG_OUTPUT @DEBUG_OUTPUT@
+#define DEBUG_STDOUT @DEBUG_STDOUT@
+#define DEBUG_LOC "@DEBUG_LOC@"
+#define OUTPUT_FILE_PREFIX "@OUTPUT_FILE_PREFIX@"
+
+// these below runtime
+#define VIDEO_NUM @VIDEO_NUM@
+#define GETCH_DELAY @GETCH_DELAY@
+#define HANDLER_TIMEOUT @HANDLER_TIMEOUT@
+#define FORCE_HANDLER_EXIT @FORCE_HANDLER_EXIT@
+#define USE_STALE_FRAME @USE_STALE_FRAME@
+#define STILL_DOWNSAMPLE_EXPONENT @STILL_DOWNSAMPLE_EXPONENT@
+#define STILL_CHANGE_TIME @STILL_CHANGE_TIME@
+#define STILL_NOISE_THRESHOLD @STILL_NOISE_THRESHOLD@
+#define STILL_SAMPLING_INC @STILL_SAMPLING_INC@
+#define STILL_SAMPLING_PERCENT @STILL_SAMPLING_PERCENT@
+#define STILL_DEFLECTION_PERCENT @STILL_DEFLECTION_PERCENT@
+#define SHARP_TILES_PER_SIDE @SHARP_TILES_PER_SIDE@
+#define SHARP_DIFF_LOW @SHARP_DIFF_LOW@
+#define SHARP_DIFF_HIGH @SHARP_DIFF_HIGH@
+#define SHARP_HIGH_PERCENT @SHARP_HIGH_PERCENT@
+#define SHARP_TILES_REQUIRED @SHARP_TILES_REQUIRED@
+
+namespace projector {
+
+	enum Options {
+		OPT_NONE = 0,
+	    OPT_VIDEO_NUM,
+		OPT_GETCH_DELAY,
+		OPT_HANDLER_TIMEOUT,
+		OPT_FORCE_HANDLER_EXIT,
+		OPT_USE_STALE_FRAME,
+		OPT_STILL_DOWNSAMPLE_EXPONENT,
+		OPT_STILL_CHANGE_TIME,
+	    OPT_STILL_NOISE_THRESHOLD,
+		OPT_STILL_SAMPLING_INC,
+	    OPT_STILL_SAMPLING_PERCENT,
+	    OPT_STILL_DEFLECTION_PERCENT,
+		OPT_SHARP_TILES_PER_SIDE,
+	    OPT_SHARP_DIFF_LOW,
+		OPT_SHARP_DIFF_HIGH,
+		OPT_SHARP_HIGH_PERCENT,
+	    OPT_SHARP_TILES_REQUIRED,
+		OPT_END
+	};
+
+	/**
+	Describes lower and upper bounds for integer options.
+	*/
+	typedef struct _OptLimits {
+		/**
+		The option identifier.
+		*/
+        Options option;
+
+		/**
+		Lower bound.
+		*/
+        int limitLow;
+		
+		/**
+		Upper bound.
+		*/
+        int limitHigh;
+		
+		/**
+		Pointer to the variable holding the option value.
+		*/
+        int *pointer;
+	} OptLimits;    
+
+	/**
+	Singleton class holding all the integer option values, associated arrays
+	and methods to manipulat them. Also see README.md for more details.
+	*/
+	class Arguments {
+	public:
+		static int optHelp;
+		static int optShowOpts;
+		static int optUseCurses;
+		static int optShowWindow;
+		static int optVideoNum;
+		static int optGetchDelay;
+		static int optHandlerTimeout;
+		static int optForceHandlerExit;
+		static int optUseStaleFrame;
+		static int optStillDownsampleExponent;
+		static int optStillChangeTime;
+		static int optStillNoiseThreshold;
+		static int optStillSamplingInc;
+		static int optStillSamplingPercent;
+		static int optStillDeflectionPercent;
+		static int optSharpTilesPerSide;
+		static int optSharpDiffLow;
+		static int optSharpDiffHigh;
+		static int optSharpHighPercent;
+		static int optSharpTilesRequired;
+	private:
+	// options with text arguments occur here, too, but the limits must be equal
+	// all the Options enum values must occur here in right order
+		const static OptLimits optLimits[];
+
+		const static struct option options[];
+	public:
+		/**
+		Initializes members to #defined values
+		*/
+		static void init();
+
+		/**
+		Updates member values using command line arguments.
+		*/
+		static void parse(int argc, char **argv);
+
+		/**
+		Briefly prints all effective argument values.
+		*/
+		static void showOpts();
+	};
+}
+#endif
